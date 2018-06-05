@@ -60,9 +60,11 @@ def download_images(item, dir_path='data'):
             if extension == "jpeg":
                 extension = "jpg"
             if extension is None:
-                raise DownloadError()
+                pass
+                # raise DownloadError()
         except:
-            raise DownloadError()
+            pass
+            # raise DownloadError()
         if (sys.getsizeof(image) > min_size):
             image_name = name + '.' + extension;
             image_path = os.path.join(dir_path, image_name)
