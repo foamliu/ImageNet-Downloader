@@ -60,8 +60,7 @@ def download_images(item, dir_path='data'):
             if extension == "jpeg":
                 extension = "jpg"
             if extension is None:
-                pass
-                # raise DownloadError()
+                return
         except:
             pass
             # raise DownloadError()
@@ -76,6 +75,8 @@ def download_images(item, dir_path='data'):
     except DownloadError as e:
         pass
         # print('Could not download ' + url)
+    except:
+        pass
 
 
 def worker(q):
