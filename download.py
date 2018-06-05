@@ -66,7 +66,7 @@ def download_images(item, threadLock, dir_path='data'):
         if (sys.getsizeof(image) > min_size):
             image_name = name + '.' + extension;
             image_path = os.path.join(dir_path, image_name)
-            image_file = open(image_path, 'w')
+            image_file = open(image_path, 'wb')
             image_file.write(image)
             image_file.close()
             # print("Downloaded: {}".format(image_name))
