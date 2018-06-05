@@ -9,8 +9,7 @@ from queue import Queue
 from socket import error as SocketError
 from socket import timeout as TimeoutError
 from ssl import CertificateError
-from console_progressbar import ProgressBar
-
+import codecs
 
 class DownloadError(Exception):
     def __init__(self, message=""):
@@ -84,7 +83,7 @@ def worker(q):
 if __name__ == '__main__':
     fname = 'fall11_urls.txt'
     print('Loading image urls...')
-    with open(fname) as f:
+    with codecs.open(fname, "r",encoding='utf-8', errors='ignore') as f:
         lines = f.readlines()
     print('{} urls loaded'.format(len(lines)))
 
