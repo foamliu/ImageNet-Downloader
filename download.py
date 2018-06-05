@@ -112,7 +112,8 @@ if __name__ == '__main__':
     while True:
         if q.qsize() == 0:
             break
-        pb.print_progress_bar((len(lines) - q.qsize()) * 100)
+        files = [f for f in os.listdir('data') if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+        pb.print_progress_bar(len(files) * 100)
         time.sleep(500)
 
     # block until all tasks are done
