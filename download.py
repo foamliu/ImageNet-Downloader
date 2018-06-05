@@ -47,7 +47,7 @@ def make_directory(path):
         os.makedirs(path)
 
 
-def download_images(item, threadLock, dir_path='data'):
+def download_images(item, dir_path='data'):
     min_size = 1000
     make_directory(dir_path)
     tokens = item.split('\t')
@@ -70,21 +70,18 @@ def download_images(item, threadLock, dir_path='data'):
             image_file.write(image)
             image_file.close()
             # print("Downloaded: {}".format(image_name))
-            with threadLock:
-                global global_counter
-                global_counter += 1
             time.sleep(10)
     except DownloadError as e:
         pass
         #print('Could not download ' + url)
 
 
-def worker(q, threadLock):
+def worker(q):
     while True:
         item = q.get()
         if item is None:
             break
-        download_images(item, threadLock)
+        download_images(item)
         q.task_done()
 
 
@@ -102,18 +99,17 @@ if __name__ == '__main__':
 
     threadLock = threading.Lock()
     num_worker_threads = 64
-    global_counter = 0
     threads = []
     for i in range(num_worker_threads):
-        t = threading.Thread(target=worker, args=(q, threadLock))
+        t = threading.Thread(target=worker, args=(q,))
         t.start()
         threads.append(t)
 
-    pb = ProgressBar(total=len(lines), prefix='Compose train images', suffix='', decimals=3, length=50, fill='=')
+    pb = ProgressBar(total=len(lines), prefix='Downloading images', suffix='', decimals=3, length=50, fill='=')
     while True:
         if q.qsize() == 0:
             break
-        pb.print_progress_bar(global_counter)
+        pb.print_progress_bar(q.qsize())
         time.sleep(500)
 
     # block until all tasks are done
