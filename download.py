@@ -73,7 +73,7 @@ def download_images(item, dir_path='data'):
             time.sleep(10)
     except DownloadError as e:
         pass
-        #print('Could not download ' + url)
+        # print('Could not download ' + url)
 
 
 def worker(q):
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     while True:
         if q.qsize() == 0:
             break
-        pb.print_progress_bar(q.qsize())
+        pb.print_progress_bar(len(lines) - q.qsize())
         time.sleep(500)
 
     # block until all tasks are done
