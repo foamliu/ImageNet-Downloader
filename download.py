@@ -9,6 +9,7 @@ from queue import Queue
 from socket import error as SocketError
 from socket import timeout as TimeoutError
 from ssl import CertificateError
+from console_progressbar import ProgressBar
 
 
 class DownloadError(Exception):
@@ -71,7 +72,7 @@ def download_images(item, dir_path='data'):
         print('Could not download ' + url)
 
 
-def worker():
+def worker(q):
     while True:
         item = q.get()
         if item is None:
@@ -81,19 +82,22 @@ def worker():
 
 
 if __name__ == '__main__':
-    num_worker_threads = 16
-    threads = []
-    for i in range(num_worker_threads):
-        t = threading.Thread(target=worker)
-        t.start()
-        threads.append(t)
-
     fname = 'fall11_urls.txt'
+    print('Loading image urls...')
     with open(fname) as f:
         lines = f.readlines()
+    print('{} urls loaded'.format(len(lines)))
+
     q = Queue()
     for item in lines:
         q.put(item)
+
+    num_worker_threads = 16
+    threads = []
+    for i in range(num_worker_threads):
+        t = threading.Thread(target=worker, args=(q,))
+        t.start()
+        threads.append(t)
 
     # block until all tasks are done
     q.join()
