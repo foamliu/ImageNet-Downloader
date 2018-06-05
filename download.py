@@ -1,15 +1,14 @@
+import http.client
 import imghdr
 import os
 import sys
 import threading
 import time
+import urllib.request
 from queue import Queue
 from socket import error as SocketError
 from socket import timeout as TimeoutError
 from ssl import CertificateError
-
-import httplib
-import urllib2
 
 
 class DownloadError(Exception):
@@ -22,17 +21,17 @@ def download(url, timeout=500, retry=3, sleep=0.8):
     count = 0
     while True:
         try:
-            f = urllib2.urlopen(url, timeout=timeout)
+            f = urllib.request.urlopen(url, timeout=timeout)
             if f is None:
                 raise DownloadError('Cannot open URL' + url)
             content = f.read()
             f.close()
             break
-        except (urllib2.HTTPError, httplib.HTTPException, CertificateError) as e:
+        except (urllib.request.HTTPError, http.client.HTTPException, CertificateError) as e:
             count += 1
             if count > retry:
                 raise DownloadError()
-        except (urllib2.URLError, TimeoutError, SocketError, IOError) as e:
+        except (urllib.request.URLError, TimeoutError, SocketError, IOError) as e:
             count += 1
             if count > retry:
                 raise DownloadError()
