@@ -75,7 +75,8 @@ def download_images(item, threadLock, dir_path='data'):
                 global_counter += 1
             time.sleep(10)
     except DownloadError as e:
-        print('Could not download ' + url)
+        pass
+        #print('Could not download ' + url)
 
 
 def worker(q, threadLock):
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     print('{} urls enqueued'.format(q.qsize()))
 
     threadLock = threading.Lock()
-    num_worker_threads = 16
+    num_worker_threads = 64
     global_counter = 0
     threads = []
     for i in range(num_worker_threads):
