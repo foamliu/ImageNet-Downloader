@@ -1,3 +1,4 @@
+import codecs
 import http.client
 import imghdr
 import os
@@ -9,7 +10,9 @@ from queue import Queue
 from socket import error as SocketError
 from socket import timeout as TimeoutError
 from ssl import CertificateError
-import codecs
+
+from console_progressbar import ProgressBar
+
 
 class DownloadError(Exception):
     def __init__(self, message=""):
@@ -44,11 +47,12 @@ def make_directory(path):
         os.makedirs(path)
 
 
-def download_images(item, dir_path='data'):
+def download_images(item, threadLock, dir_path='data'):
     min_size = 1000
     make_directory(dir_path)
-    name = item.split(' ')[0]
-    url = item.split(' ')[1]
+    tokens = item.split('\t')
+    name = tokens[0]
+    url = tokens[1]
     try:
         image = download(url)
         try:
@@ -65,38 +69,51 @@ def download_images(item, dir_path='data'):
             image_file = open(image_path, 'w')
             image_file.write(image)
             image_file.close()
-            print("Downloaded: {}".format(image_name))
+            # print("Downloaded: {}".format(image_name))
+            with threadLock:
+                global global_counter
+                global_counter += 1
             time.sleep(10)
     except DownloadError as e:
         print('Could not download ' + url)
 
 
-def worker(q):
+def worker(q, threadLock):
     while True:
         item = q.get()
         if item is None:
             break
-        download_images(item)
+        download_images(item, threadLock)
         q.task_done()
 
 
 if __name__ == '__main__':
     fname = 'fall11_urls.txt'
     print('Loading image urls...')
-    with codecs.open(fname, "r",encoding='utf-8', errors='ignore') as f:
+    with codecs.open(fname, "r", encoding='utf-8', errors='ignore') as f:
         lines = f.readlines()
     print('{} urls loaded'.format(len(lines)))
 
     q = Queue()
     for item in lines:
         q.put(item)
+    print('{} urls enqueued'.format(q.qsize()))
 
+    threadLock = threading.Lock()
     num_worker_threads = 16
+    global_counter = 0
     threads = []
     for i in range(num_worker_threads):
-        t = threading.Thread(target=worker, args=(q,))
+        t = threading.Thread(target=worker, args=(q, threadLock))
         t.start()
         threads.append(t)
+
+    pb = ProgressBar(total=len(lines), prefix='Compose train images', suffix='', decimals=3, length=50, fill='=')
+    while True:
+        if q.qsize() == 0:
+            break
+        pb.print_progress_bar(global_counter)
+        time.sleep(500)
 
     # block until all tasks are done
     q.join()
