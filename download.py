@@ -98,7 +98,7 @@ if __name__ == '__main__':
     print('{} urls enqueued'.format(q.qsize()))
 
     threadLock = threading.Lock()
-    num_worker_threads = 64
+    num_worker_threads = 128
     threads = []
     for i in range(num_worker_threads):
         t = threading.Thread(target=worker, args=(q,))
