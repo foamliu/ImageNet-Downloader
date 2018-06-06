@@ -12,7 +12,7 @@ def resize(infile, outfile, size):
     try:
         img = cv.imread(infile)
         img = cv.resize(img, size, cv.INTER_CUBIC)
-        img.save(outfile)
+        cv.imwrite(outfile, img)
     except OSError:
         return
     except ZeroDivisionError:
