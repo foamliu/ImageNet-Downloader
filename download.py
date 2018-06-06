@@ -10,6 +10,7 @@ from queue import Queue
 from socket import error as SocketError
 from socket import timeout as TimeoutError
 from ssl import CertificateError
+import numpy as np
 
 from console_progressbar import ProgressBar
 
@@ -53,6 +54,11 @@ def download_images(item, dir_path='data'):
     tokens = item.split('\t')
     name = tokens[0]
     url = tokens[1]
+
+    if os.path.isfile(os.path.join(dir_path, name + '.' + 'jpg')) or os.path.isfile(
+            os.path.join(dir_path, name + '.' + 'png')):
+        return
+
     try:
         image = download(url)
         try:
@@ -94,6 +100,8 @@ if __name__ == '__main__':
     with codecs.open(fname, "r", encoding='utf-8', errors='ignore') as f:
         lines = f.readlines()
     print('{} urls loaded'.format(len(lines)))
+
+    np.random.shuffle(lines)
 
     q = Queue()
     for item in lines:
