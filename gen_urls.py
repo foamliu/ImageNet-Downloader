@@ -67,7 +67,7 @@ def main():
             urls.append(row)
 
     pd.DataFrame(urls).to_csv(
-        args.urllist, index=False, header=False, sep=' ')
+        args.urllist, index=False, columns=['name', 'url'], header=False, sep=' ')
 
 
 if __name__ == '__main__':
