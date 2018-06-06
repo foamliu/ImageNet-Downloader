@@ -12,7 +12,7 @@ def resize(infile, outfile, size):
     try:
         img = cv.imread(infile)
         img = cv.resize(img, size, cv.INTER_CUBIC)
-        lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+        # lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
         cv.imwrite(outfile, img)
     except OSError:
         return
