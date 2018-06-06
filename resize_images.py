@@ -8,7 +8,7 @@ from tqdm import tqdm
 def resize(infile, outfile, size):
     if os.path.exists(outfile):
         return
-    if os.stat(outfile).st_size == 0:
+    if os.stat(infile).st_size == 0:
         return
 
     try:
