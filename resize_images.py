@@ -1,8 +1,7 @@
-import os
 import argparse
+import os
 
-import pandas as pd
-from PIL import Image
+import cv2 as cv
 from tqdm import tqdm
 
 
@@ -11,11 +10,9 @@ def resize(infile, outfile, size):
         return
 
     try:
-        img = Image.open(infile)
-        img = img.resize(size)
-        if img.mode != 'RBG':
-            img = img.convert('RGB')
-        img.save(outfile, 'JPEG')
+        img = cv.imread(infile)
+        img = cv.resize(img, size, cv.INTER_CUBIC)
+        img.save(outfile)
     except OSError:
         return
     except ZeroDivisionError:
