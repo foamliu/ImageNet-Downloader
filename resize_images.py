@@ -17,6 +17,8 @@ def resize(infile, outfile, size):
         return
     except ZeroDivisionError:
         return
+    except cv.error:
+        return
 
 
 def main():
