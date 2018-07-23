@@ -17,11 +17,7 @@ def resize(infile, outfile, size):
         img = cv.resize(img, size, cv.INTER_CUBIC)
         # lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
         cv.imwrite(outfile, img)
-    except OSError:
-        return
-    except ZeroDivisionError:
-        return
-    except cv.error:
+    except (OSError, ZeroDivisionError, cv.error, AttributeError):
         return
 
 
